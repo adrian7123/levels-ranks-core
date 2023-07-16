@@ -325,7 +325,7 @@
 		"chi"		"输入: {PINK}!lvl {WHITE}- 打开主菜单"
 		"es"		"Escribir: {PINK}!lvl {WHITE}- menú principal"
 		"de"		"Schreib: {PINK}!lvl {WHITE}- Hauptmenü"
-		"pt"		"Digite: {PINK}!lvl {WHITE}- Menu Principal"
+		"pt"		"Digite: {PINK}!lvl {WHITE}- Menu Principal Se Você for gay é claro"
 	}
 	"LevelUp"
 	{

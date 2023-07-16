@@ -26,6 +26,7 @@
 #include <clientprefs>
 #include <sdktools>
 #include <profiler>
+#include <ripext>
 
 #if SOURCEMOD_V_MINOR < 10
 	#error This plugin can only compile on SourceMod 1.10.
@@ -44,9 +45,9 @@
 	#error This plugin can only compile on lvl_ranks.inc v3.1.7 Beta 1.
 #endif
 
-#define PLUGIN_NAME "Levels Ranks"
+#define PLUGIN_NAME		 "Levels Ranks"
 #define PLUGIN_AUTHORS "RoadSide Romeo & Wend4r"
-#define PLUGIN_URL "https://github.com/levelsranks/levels-ranks-core"
+#define PLUGIN_URL		 "https://github.com/levelsranks/levels-ranks-core"
 
 #include "levels_ranks/defines.sp"
 
@@ -55,48 +56,48 @@ enum struct LR_PlayerInfo
 	bool bHaveBomb;
 	bool bInitialized;
 
-	int  iAccountID;
-	int  iStats[LR_StatsType];
-	int  iSessionStats[LR_StatsType];
-	int  iRoundExp;
-	int  iKillStreak;
+	int	 iAccountID;
+	int	 iStats[LR_StatsType];
+	int	 iSessionStats[LR_StatsType];
+	int	 iRoundExp;
+	int	 iKillStreak;
 
 	// Put it in players.sp and recreate the logic from TODO.
 }
 
-any             g_Settings[LR_SettingType], 
-                g_SettingsStats[LR_SettingStatsType];
+any g_Settings[LR_SettingType],
+	g_SettingsStats[LR_SettingStatsType];
 
-bool            g_bCoreIsLoaded, 
-                g_bAllowStatistic, 
-                g_bDatabaseSQLite;
+bool g_bCoreIsLoaded,
+	g_bAllowStatistic,
+	g_bDatabaseSQLite;
 
-int             g_iBonus[10], 		// Special_Bonuses from settings_stats.ini .
-                g_iDBCountPlayers;
+int g_iBonus[10],	 // Special_Bonuses from settings_stats.ini .
+	g_iDBCountPlayers;
 
-char            g_sPluginName[] = PLUGIN_NAME, 
-                g_sPluginTitle[64], 
-                g_sTableName[32], 
-                g_sSoundUp[PLATFORM_MAX_PATH], 
-                g_sSoundDown[PLATFORM_MAX_PATH];
+char g_sPluginName[] = PLUGIN_NAME,
+		 g_sPluginTitle[64],
+		 g_sTableName[32],
+		 g_sSoundUp[PLATFORM_MAX_PATH],
+		 g_sSoundDown[PLATFORM_MAX_PATH];
 
-LR_PlayerInfo   g_iPlayerInfo[MAXPLAYERS + 1], 
-                g_iInfoNULL;		// What?
+LR_PlayerInfo g_iPlayerInfo[MAXPLAYERS + 1],
+	g_iInfoNULL;	// What?
 
-GlobalForward   g_hForward_OnCoreIsReady;
+GlobalForward	 g_hForward_OnCoreIsReady;
 
-PrivateForward  g_hForward_Hook[LR_HookType], 
-                g_hForward_CreatedMenu[LR_MenuType], 
-                g_hForward_SelectedMenu[LR_MenuType];
+PrivateForward g_hForward_Hook[LR_HookType],
+	g_hForward_CreatedMenu[LR_MenuType],
+	g_hForward_SelectedMenu[LR_MenuType];
 
-EngineVersion   g_iEngine;		// Init in api.sp
+EngineVersion g_iEngine;	// Init in api.sp
 
-ArrayList       g_hRankNames, 
-                g_hRankExp;
+ArrayList			g_hRankNames,
+	g_hRankExp;
 
-Cookie          g_hLastResetMyStats;
+Cookie	 g_hLastResetMyStats;
 
-Database        g_hDatabase;
+Database g_hDatabase;
 
 #include "levels_ranks/settings.sp"
 #include "levels_ranks/database.sp"
@@ -106,12 +107,12 @@ Database        g_hDatabase;
 #include "levels_ranks/events.sp"
 #include "levels_ranks/api.sp"
 
-public Plugin myinfo = 
+public Plugin myinfo =
 {
-	name = "[" ... PLUGIN_NAME ... "] Core", 
-	author = PLUGIN_AUTHORS, 
-	version = PLUGIN_VERSION, 
-	url = PLUGIN_URL
+	name		= "[" ... PLUGIN_NAME... "] Core",
+	author	= PLUGIN_AUTHORS,
+	version = PLUGIN_VERSION,
+	url			= PLUGIN_URL
 };
 
 public void OnPluginStart()
@@ -133,7 +134,7 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
-	if(g_Settings[LR_IsLevelSound])
+	if (g_Settings[LR_IsLevelSound])
 	{
 		static char sSoundPath[PLATFORM_MAX_PATH + 6] = "sound/";
 
@@ -152,9 +153,9 @@ public void OnMapStart()
 
 public void OnPluginEnd()
 {
-	for(int i = GetMaxPlayers(); --i;)
+	for (int i = GetMaxPlayers(); --i;)
 	{
-		if(g_iPlayerInfo[i].bInitialized)
+		if (g_iPlayerInfo[i].bInitialized)
 		{
 			SaveDataPlayer(i, true);
 		}

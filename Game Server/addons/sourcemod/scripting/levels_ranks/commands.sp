@@ -1,12 +1,11 @@
-
 Action Call_MainMenu(int iClient, int iArgs)
 {
-	if(CheckStatus(iClient) && g_hDatabase)
+	if (CheckStatus(iClient) && g_hDatabase)
 	{
 		CheckRank(iClient);
 		MainMenu(iClient);
 	}
-	else 
+	else
 	{
 		LR_PrintMessage(iClient, true, false, "You account is not loaded. Please reconnect on the server!");
 	}
@@ -26,36 +25,36 @@ Action Call_ReloadSettings(int iClient, int iArgs)
 
 Action Call_ResetData(int iArgs)
 {
-	if(iArgs != 1)
+	if (iArgs != 1)
 	{
 		PrintToServer("[LR] Usage: sm_lvl_reset <all|exp|stats>");
 	}
 	else
 	{
-		int iType = -1;
+		int				iType = -1;
 
 		decl char sBuffer[256];
 
 		GetCmdArg(1, sBuffer, 8);
 
-		if(!strcmp(sBuffer, "all"))
+		if (!strcmp(sBuffer, "all"))
 		{
 			iType = 0;
 		}
-		else if(!strcmp(sBuffer, "exp"))
+		else if (!strcmp(sBuffer, "exp"))
 		{
 			iType = 1;
 		}
-		else if(!strcmp(sBuffer, "stats"))
+		else if (!strcmp(sBuffer, "stats"))
 		{
 			iType = 2;
 		}
 
-		if(iType != -1)
+		if (iType != -1)
 		{
 			Transaction hTransaction = new Transaction();
 
-			switch(iType)
+			switch (iType)
 			{
 				case 0:
 				{
@@ -90,7 +89,7 @@ Action Call_ResetData(int iArgs)
 
 Action Call_ResetPlayer(int iClient, int iArgs)
 {
-	if(iArgs != 1)
+	if (iArgs != 1)
 	{
 		ReplyToCommand(iClient, "[LR] Usage: sm_lvl_del <#userid|name|steamid>");
 	}
@@ -98,8 +97,8 @@ Action Call_ResetPlayer(int iClient, int iArgs)
 	{
 		bool bTargetIsMl = false;
 
-		int iTargets = 0,
-			iTargetList[MAXPLAYERS + 1];
+		int	 iTargets		 = 0,
+				iTargetList[MAXPLAYERS + 1];
 
 		char sBuffer[256];
 
@@ -107,22 +106,22 @@ Action Call_ResetPlayer(int iClient, int iArgs)
 
 		int iAccountID = (!strncmp(sBuffer, "STEAM_", 6) && sBuffer[7] == ':') ? GetAccountIDFromSteamID2(sBuffer) : 0;
 
-		if((iTargets = ProcessTargetString(sBuffer, iClient, iTargetList, sizeof(iTargetList), COMMAND_FILTER_NO_BOTS, sBuffer, sizeof(sBuffer), bTargetIsMl)) < 1 && !iAccountID)
+		if ((iTargets = ProcessTargetString(sBuffer, iClient, iTargetList, sizeof(iTargetList), COMMAND_FILTER_NO_BOTS, sBuffer, sizeof(sBuffer), bTargetIsMl)) < 1 && !iAccountID)
 		{
 			ReplyToTargetError(iClient, iTargets);
 		}
 		else
 		{
-			for(int i = 0; i != iTargets; i++)
+			for (int i = 0; i != iTargets; i++)
 			{
 				ResetPlayerCommand(iClient, iTargetList[i]);
 			}
 
-			if(iAccountID)
+			if (iAccountID)
 			{
-				for(int i = GetMaxPlayers(); --i;)
+				for (int i = GetMaxPlayers(); --i;)
 				{
-					if(g_iPlayerInfo[i].iAccountID == iAccountID && g_iPlayerInfo[i].bInitialized)
+					if (g_iPlayerInfo[i].iAccountID == iAccountID && g_iPlayerInfo[i].bInitialized)
 					{
 						ResetPlayerCommand(iClient, i);
 
@@ -151,35 +150,35 @@ void ResetPlayerCommand(int iClient, int iTarget)
 
 public void OnClientSayCommand_Post(int iClient, const char[] sCommand, const char[] sArgs)
 {
-	if(CheckStatus(iClient))
+	if (CheckStatus(iClient))
 	{
-		if(!strcmp(sArgs, "top", false) || !strcmp(sArgs, "!top", false))
+		if (!strcmp(sArgs, "top", false) || !strcmp(sArgs, "!top", false))
 		{
 			OverAllTopPlayers(iClient, false);
 		}
-		else if(!strcmp(sArgs, "toptime", false) || !strcmp(sArgs, "!toptime", false))
+		else if (!strcmp(sArgs, "toptime", false) || !strcmp(sArgs, "!toptime", false))
 		{
 			OverAllTopPlayers(iClient);
 		}
-		else if(!strcmp(sArgs, "session", false) || !strcmp(sArgs, "!session", false))
+		else if (!strcmp(sArgs, "session", false) || !strcmp(sArgs, "!session", false))
 		{
 			MyStatsSession(iClient);
 		}
-		else if(!strcmp(sArgs, "rank", false) || !strcmp(sArgs, "!rank", false))
+		else if (!strcmp(sArgs, "rank", false) || !strcmp(sArgs, "!rank", false))
 		{
-			int iKills = g_iPlayerInfo[iClient].iStats[ST_KILLS],
-				iDeaths = g_iPlayerInfo[iClient].iStats[ST_DEATHS];
+			int iKills	= g_iPlayerInfo[iClient].iStats[ST_KILLS],
+					iDeaths = g_iPlayerInfo[iClient].iStats[ST_DEATHS];
 
-			float fKDR = iKills / (iDeaths ? float(iDeaths) : 1.0);
+			float fKDR	= iKills / (iDeaths ? float(iDeaths) : 1.0);
 
-			if(g_Settings[LR_ShowRankMessage])
+			if (g_Settings[LR_ShowRankMessage])
 			{
 				int iPlaceInTop = g_iPlayerInfo[iClient].iStats[ST_PLACEINTOP],
-					iExp = g_iPlayerInfo[iClient].iStats[ST_EXP];
+						iExp				= g_iPlayerInfo[iClient].iStats[ST_EXP];
 
-				for(int i = GetMaxPlayers(); --i;)
+				for (int i = GetMaxPlayers(); --i;)
 				{
-					if(CheckStatus(i)) 
+					if (CheckStatus(i))
 					{
 						LR_PrintMessage(i, true, false, "%T", "RankPlayer", i, iClient, iPlaceInTop, g_iDBCountPlayers, iExp, iKills, iDeaths, fKDR);
 					}
